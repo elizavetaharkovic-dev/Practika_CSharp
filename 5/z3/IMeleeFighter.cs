@@ -1,0 +1,4 @@
+﻿interface IMeleeFighter
+{
+    void MeleeAttack();
+}

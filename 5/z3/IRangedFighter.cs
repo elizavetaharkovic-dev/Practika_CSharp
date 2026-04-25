@@ -1,0 +1,4 @@
+﻿interface IRangedFighter
+{
+    void RangedAttack();
+}
