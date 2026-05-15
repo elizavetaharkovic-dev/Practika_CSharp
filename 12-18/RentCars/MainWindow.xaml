@@ -1,0 +1,171 @@
+﻿<Window x:Class="RentCars.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Аренда авто" Height="400" Width="700">
+
+    <Window.Resources>
+
+        <!-- DataTemplate для списка автомобилей -->
+        <DataTemplate x:Key="CarTemplate">
+            <Border CornerRadius="5" Margin="2" Padding="5">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Status}" Value="True">
+                                <Setter Property="Background" Value="LightGreen"/>
+                                <Setter Property="BorderBrush" Value="Green"/>
+                                <Setter Property="BorderThickness" Value="1"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <StackPanel>
+                    <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding PricePerDay, StringFormat='Цена: {0} руб/день'}"/>
+                    <TextBlock Text="{Binding StatusText}"/>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+
+        <!-- ControlTemplate для кнопки с анимацией -->
+        <ControlTemplate x:Key="StyledButton" TargetType="Button">
+            <Border x:Name="border"
+                    Background="{TemplateBinding Background}"
+                    CornerRadius="10"
+                    BorderBrush="DarkBlue"
+                    BorderThickness="2"
+                    Padding="10,5"
+                    RenderTransformOrigin="0.5,0.5">
+                <Border.RenderTransform>
+                    <ScaleTransform/>
+                </Border.RenderTransform>
+                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="border" Property="Background" Value="LightBlue"/>
+                    <Trigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetName="border"
+                                                 Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
+                                                 From="1" To="1.05" Duration="0:0:0.1" AutoReverse="True"/>
+                                <DoubleAnimation Storyboard.TargetName="border"
+                                                 Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                                                 From="1" To="1.05" Duration="0:0:0.1" AutoReverse="True"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </Trigger.EnterActions>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter TargetName="border" Property="Background" Value="Orange"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter TargetName="border" Property="Background" Value="LightGray"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <!-- Анимация появления -->
+        <Storyboard x:Key="FadeInScaleAnimation">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                             From="0" To="1" Duration="0:0:0.5"/>
+            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
+                             From="0.8" To="1" Duration="0:0:0.3"/>
+            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                             From="0.8" To="1" Duration="0:0:0.3"/>
+        </Storyboard>
+
+    </Window.Resources>
+
+    <Window.InputBindings>
+        <KeyBinding Key="N" Modifiers="Control" Command="{Binding BookCarCommand}"/>
+        <KeyBinding Key="E" Modifiers="Control" Command="{Binding EditBookingCommand}"/>
+        <KeyBinding Key="D" Modifiers="Control" Command="{Binding CancelBookingCommand}"/>
+    </Window.InputBindings>
+
+    <DockPanel>
+
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="Файл">
+                <MenuItem Header="Выход" Click="ExitMenuItem_Click"/>
+            </MenuItem>
+            <MenuItem Header="Автомобили">
+                <MenuItem Header="Список автомобилей" IsEnabled="False"/>
+            </MenuItem>
+            <MenuItem Header="Бронирование">
+                <MenuItem Header="Забронировать" Command="{Binding BookCarCommand}"/>
+                <MenuItem Header="Редактировать" Command="{Binding EditBookingCommand}"/>
+                <MenuItem Header="Отменить" Command="{Binding CancelBookingCommand}"/>
+                <MenuItem Header="Чат" Command="{Binding OpenChatCommand}"/>
+            </MenuItem>
+            <MenuItem Header="Настройки">
+                <MenuItem Header="О программе" Click="AboutMenuItem_Click"/>
+            </MenuItem>
+        </Menu>
+
+        <ToolBar DockPanel.Dock="Top">
+            <Button Content="Забронировать" Command="{Binding BookCarCommand}"/>
+            <Button Content="Редактировать" Command="{Binding EditBookingCommand}"/>
+            <Button Content="Отменить" Command="{Binding CancelBookingCommand}"/>
+        </ToolBar>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="400"/>
+            </Grid.ColumnDefinitions>
+
+            <ListBox Grid.Column="0" 
+                     ItemsSource="{Binding Cars}" 
+                     SelectedItem="{Binding SelectedCar}"
+                     ItemTemplate="{StaticResource CarTemplate}"
+                     Loaded="CarListBox_Loaded"/>
+
+            <StackPanel Grid.Column="1" Margin="5">
+                <Label Content="Класс автомобиля" FontSize="12" Margin="0,0,0,5"/>
+                <ComboBox ItemsSource="{Binding CarClasses}" 
+                          SelectedItem="{Binding SelectedCarClass}"
+                          Margin="0,0,0,10"/>
+                <CheckBox Content="Показывать только доступные" 
+                          IsChecked="{Binding ShowOnlyAvailable}"
+                          Margin="0,0,0,10"/>
+                <Label Content="Срок аренды" FontSize="16"/>
+                <Slider Minimum="1" Maximum="30" 
+                        Value="{Binding RentalDays}" 
+                        TickFrequency="1" 
+                        IsSnapToTickEnabled="True"/>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="{Binding RentalDays}"/>
+                    <Label Content="дн."/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Стоимость аренды: " FontWeight="Bold"/>
+                    <Label Content="{Binding TotalPrice}" FontWeight="Bold"/>
+                    <Label Content=" руб" FontWeight="Bold"/>
+                </StackPanel>
+                <Button Content=" 🚗 Забронировать" Margin="0,10,0,5"
+                        Command="{Binding BookCarCommand}" 
+                        Width="150"
+                        Template="{StaticResource StyledButton}"/>
+                <TextBlock Text="{Binding ProcessingStatus}" 
+                           FontSize="14" 
+                           Foreground="Blue" 
+                           HorizontalAlignment="Center" 
+                           Margin="0,10,0,0">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsProcessing}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </StackPanel>
+        </Grid>
+
+    </DockPanel>
+</Window>
