@@ -1,0 +1,36 @@
+﻿@model List<PhotoGallery.Models.ImageItem>
+
+<h2>Галерея</h2>
+
+@if (TempData["Message"] != null)
+{
+    <div id="toastMessage" style="position: fixed; top: 10px; right: 10px; background: green; color: white; padding: 10px; border-radius: 5px;">
+        @TempData["Message"]
+    </div>
+
+    <script>
+        setTimeout(function() {
+            var msg = document.getElementById("toastMessage");
+            if (msg) {
+                msg.style.display = "none";
+            }
+        }, 3000);
+    </script>
+}
+
+<p>Всего: @ViewBag.Total</p>
+
+@foreach (var img in Model)
+{
+    <div>
+        <img src="@img.Url" width="200" />
+        <p><b>@img.Title</b></p>
+        <p>@img.Description</p>
+        <a href="/Gallery/Show/@img.Id">Подробнее</a> |
+        <a href="/Gallery/Edit/@img.Id">✏️ Редактировать</a> |
+        <a href="/Gallery/Delete/@img.Id" style="color: red;">🗑️ Удалить</a>
+    </div>
+    <hr />
+}
+
+<a href="/Gallery/Add">Добавить</a>

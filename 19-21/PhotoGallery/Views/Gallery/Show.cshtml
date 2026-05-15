@@ -1,0 +1,10 @@
+﻿@model PhotoGallery.Models.ImageItem
+
+<h2>@Model.Title</h2>
+
+<img src="@Model.Url" />
+
+<p><b>Описание:</b> @Model.Description</p>
+<p><b>Добавлено:</b> @Model.UploadedAt.ToShortDateString()</p>
+
+<a href="/Gallery/Index">Назад</a>

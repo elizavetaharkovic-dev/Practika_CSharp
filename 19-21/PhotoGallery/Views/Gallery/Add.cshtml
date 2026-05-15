@@ -1,0 +1,36 @@
+﻿@model PhotoGallery.Models.ImageViewModel
+
+<h2>Добавить изображение</h2>
+
+<form asp-action="Add" method="post">
+    <div>
+        <label>Название:</label><br />
+        <input asp-for="Title" />
+        <span asp-validation-for="Title" style="color: red;"></span>
+    </div>
+
+    <div>
+        <label>URL картинки:</label><br />
+        <input asp-for="Url" placeholder="https://example.com/photo.jpg" />
+        <span asp-validation-for="Url" style="color: red;"></span>
+    </div>
+
+    <div>
+        <label>Описание:</label><br />
+        <textarea asp-for="Description"></textarea>
+        <span asp-validation-for="Description" style="color: red;"></span>
+    </div>
+
+    <button type="submit">Добавить</button>
+</form>
+
+@if (TempData["Message"] != null)
+{
+    <p style="color: green;">@TempData["Message"]</p>
+}
+
+<a href="/Gallery/Index">Назад</a>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

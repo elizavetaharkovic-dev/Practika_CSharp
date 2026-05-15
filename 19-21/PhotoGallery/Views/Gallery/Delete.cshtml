@@ -1,0 +1,15 @@
+﻿@model PhotoGallery.Models.ImageItem
+
+<h2>Удалить изображение?</h2>
+
+<div>
+    <img src="@Model.Url" width="200" />
+    <p><b>@Model.Title</b></p>
+    <p>@Model.Description</p>
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" style="color: red;">Да, удалить</button>
+    <a href="/Gallery/Index">Нет, вернуться</a>
+</form>

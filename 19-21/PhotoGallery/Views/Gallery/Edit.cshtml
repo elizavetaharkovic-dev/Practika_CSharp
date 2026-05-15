@@ -1,0 +1,29 @@
+﻿@model PhotoGallery.Models.ImageItem
+
+<h2>Редактировать заголовок</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="Url" />
+    <input type="hidden" asp-for="Description" />
+    <input type="hidden" asp-for="UploadedAt" />
+
+    <div>
+        <label>Название:</label><br />
+        <input asp-for="Title" style="width: 300px;" />
+        <span asp-validation-for="Title" style="color: red;"></span>
+    </div>
+
+    <div>
+        <label>URL:</label><br />
+        <span>@Model.Url</span>
+    </div>
+
+    <div>
+        <label>Описание:</label><br />
+        <span>@Model.Description</span>
+    </div>
+
+    <button type="submit">Сохранить</button>
+    <a href="/Gallery/Index">Отмена</a>
+</form>
